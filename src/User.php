@@ -86,7 +86,7 @@ class User
         $this->nom = $nom;
     }
 
-    public static function isValid(User $u){
+    public function isValid(User $u){
         $isValid = false;
 
         if(filter_var($u->getEmail(), FILTER_VALIDATE_EMAIL))

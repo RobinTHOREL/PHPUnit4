@@ -52,7 +52,7 @@ class Product
         $this->owner = $owner;
     }
 
-    public static function isValid(Product $p) {
+    public function isValid(Product $p) {
         $isValid = false;
 
         if(!empty($p->getNom()))

@@ -9,25 +9,78 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-require '../src/Product.php';
-require '../src/Echange.php';
-require '../src/EmailSender.php';
-require '../src/DatabaseConnection.php';
+require './src/Product.php';
+require './src/Echange.php';
+require './src/EmailSender.php';
+require './src/DatabaseConnection.php';
 
 class EchangeTest extends TestCase
 {
     public function testcheckValidExchange() {
-        $receiver = $this->getMockBuilder('User')->getMock();
+        $receiver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
         $receiver->method('isValid')->willReturn(true);
 
-        $deliver = $this->getMockBuilder('User')->getMock();
+        $deliver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
         $deliver->method('isValid')->willReturn(true);
 
-        $product = $this->getMockBuilder('Product')->getMock();
+        $product = $this->getMockBuilder('Product')->disableOriginalConstructor()->getMock();
         $product->method('isValid')->willReturn(true);
 
-        $this->assertTrue(Echange::checkValidExchange(
-            new Echange($deliver, $receiver,new DateTime('now'), new DateTime('now'), $product)));
+        $emailReceiver = $this->getMockBuilder('EmailSender')->disableOriginalConstructor()->getMock();
+        $emailReceiver->method('sendEmail')->willReturn(true);
 
+
+        $dbConnection = $this->getMockBuilder('DatabaseConnection')->disableOriginalConstructor()->getMock();
+        $dbConnection->method('saveExchange')->willReturn(true);
+
+        $this->assertTrue(Echange::checkValidExchange(
+            new Echange($deliver, $receiver,new DateTime('now'), new DateTime('now'), $product, $emailReceiver, $dbConnection)));
+
+    }
+
+    public function testDoExchange() {
+        $receiver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
+        $receiver->method('isValid')->willReturn(true);
+        $receiver->method('getAge')->willReturn(20);
+
+        $deliver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
+        $deliver->method('isValid')->willReturn(true);
+
+        $product = $this->getMockBuilder('Product')->disableOriginalConstructor()->getMock();
+        $product->method('isValid')->willReturn(true);
+
+        $emailReceiver = $this->getMockBuilder('EmailSender')->disableOriginalConstructor()->getMock();
+        $emailReceiver->method('sendEmail')->willReturn(true);
+
+
+        $dbConnection = $this->getMockBuilder('DatabaseConnection')->disableOriginalConstructor()->getMock();
+        $dbConnection->method('saveExchange')->willReturn(true);
+
+
+        $this->assertTrue(Echange::doExchange(
+            new Echange($deliver, $receiver,new DateTime('now'), new DateTime('tomorrow'), $product, $emailReceiver, $dbConnection)));
+    }
+
+    public function testDoExchangeFalseDate() {
+        $receiver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
+        $receiver->method('isValid')->willReturn(true);
+        $receiver->method('getAge')->willReturn(20);
+
+        $deliver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
+        $deliver->method('isValid')->willReturn(true);
+
+        $product = $this->getMockBuilder('Product')->disableOriginalConstructor()->getMock();
+        $product->method('isValid')->willReturn(true);
+
+        $emailReceiver = $this->getMockBuilder('EmailSender')->disableOriginalConstructor()->getMock();
+        $emailReceiver->method('sendEmail')->willReturn(true);
+
+
+        $dbConnection = $this->getMockBuilder('DatabaseConnection')->disableOriginalConstructor()->getMock();
+        $dbConnection->method('saveExchange')->willReturn(true);
+
+
+        $this->assertFalse(Echange::doExchange(
+            new Echange($deliver, $receiver,new DateTime('tomorrow'), new DateTime('now'), $product, $emailReceiver, $dbConnection)));
     }
 }

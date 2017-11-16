@@ -18,15 +18,16 @@ class Echange
     private $emailSender;
     private $dbConnection;
 
-    public function __construct(User $deliver, User $receiver, DateTime $dateStart, DateTime $dateEnd, Product $product)
+    public function __construct(User $deliver, User $receiver, DateTime $dateStart, DateTime $dateEnd, Product $product, EmailSender $emailSender,
+                            DatabaseConnection $dbConnect)
     {
-        $this->deliver = $product->getOwner();
+        $this->deliver = $deliver;
         $this->receiver = $receiver;
         $this->dateStart = $dateStart;
         $this->dateEnd = $dateEnd;
         $this->product = $product;
-        $this->emailSender = new EmailSender();
-        $this->dbConnection = new DatabaseConnection();
+        $this->emailSender = $emailSender;
+        $this->dbConnection =  $dbConnect;
     }
 
     /**
@@ -117,17 +118,20 @@ class Echange
                 if ($e->getProduct()->isValid($e->product))
                     $isValid = true;
 
+
         return $isValid;
     }
 
     public function doExchange(Echange $e) {
-        if($this->checkValidExchange($e)) {
+        if($e->checkValidExchange($e)) {
             if($e->dateStart > $e->dateEnd || $e->dateStart < new DateTime("now") ) return false;
             if($e->getReceiver()->getAge() < 18) {
                 $e->emailSender->sendEmail($e->getReceiver(), "Vous êtes mineur");
-                return false;
+                $e->dbConnection->saveExchange($e);
+                return true;
             } else {
                 $e->dbConnection->saveExchange($e);
+                return true;
             }
         }
     }
