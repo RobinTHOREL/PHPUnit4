@@ -9,28 +9,25 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-require './src/Product.php';
-require './src/Echange.php';
-require './src/EmailSender.php';
-require './src/DatabaseConnection.php';
+require '../src/Product.php';
+require '../src/Echange.php';
+require '../src/EmailSender.php';
+require '../src/DatabaseConnection.php';
 
 class EchangeTest extends TestCase
 {
     public function testcheckValidExchange() {
-        $receiver = $this->createMock(User::class);
-        $receiver->method('isValid')
-            ->willReturn(true);
+        $receiver = $this->getMockBuilder('User')->getMock();
+        $receiver->method('isValid')->willReturn(true);
 
-        $deliver = $this->createMock(User::class);
-        $deliver->method('isValid')
-            ->willReturn(true);
+        $deliver = $this->getMockBuilder('User')->getMock();
+        $deliver->method('isValid')->willReturn(true);
 
-        $product = $this->createMock(Product::class);
-        $product->method('isValid')
-            ->willReturn(true);
+        $product = $this->getMockBuilder('Product')->getMock();
+        $product->method('isValid')->willReturn(true);
 
-        $this->assertTrue(Echange::checkValidExchange(new Echange($deliver, $receiver, new DateTime('now'), new DateTime('now'),
-            $product)));
+        $this->assertTrue(Echange::checkValidExchange(
+            new Echange($deliver, $receiver,new DateTime('now'), new DateTime('now'), $product)));
 
     }
 }
