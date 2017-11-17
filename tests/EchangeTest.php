@@ -9,22 +9,22 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-require './src/Product.php';
-require './src/Echange.php';
-require './src/EmailSender.php';
-require './src/DatabaseConnection.php';
+require '../src/Product.php';
+require '../src/Echange.php';
+require '../src/EmailSender.php';
+require '../src/DatabaseConnection.php';
 
 class EchangeTest extends TestCase
 {
     public function testcheckValidExchange() {
         $receiver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        $receiver->method('isValid')->willReturn(true);
+        $receiver->expects($this->exactly(1))->method('isValid')->willReturn(true);
 
         $deliver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        $deliver->method('isValid')->willReturn(true);
+        $deliver->expects($this->once())->method('isValid')->willReturn(true);
 
         $product = $this->getMockBuilder('Product')->disableOriginalConstructor()->getMock();
-        $product->method('isValid')->willReturn(true);
+        $product->expects($this->once())->method('isValid')->willReturn(true);
 
         $emailReceiver = $this->getMockBuilder('EmailSender')->disableOriginalConstructor()->getMock();
         $emailReceiver->method('sendEmail')->willReturn(true);
@@ -40,14 +40,14 @@ class EchangeTest extends TestCase
 
     public function testDoExchange() {
         $receiver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        $receiver->method('isValid')->willReturn(true);
-        $receiver->method('getAge')->willReturn(20);
+        $receiver->expects($this->once())->method('isValid')->willReturn(true);
+        $receiver->expects($this->once())->method('getAge')->willReturn(20);
 
         $deliver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        $deliver->method('isValid')->willReturn(true);
+        $deliver->expects($this->once())->method('isValid')->willReturn(true);
 
         $product = $this->getMockBuilder('Product')->disableOriginalConstructor()->getMock();
-        $product->method('isValid')->willReturn(true);
+        $product->expects($this->once())->method('isValid')->willReturn(true);
 
         $emailReceiver = $this->getMockBuilder('EmailSender')->disableOriginalConstructor()->getMock();
         $emailReceiver->method('sendEmail')->willReturn(true);
@@ -63,14 +63,14 @@ class EchangeTest extends TestCase
 
     public function testDoExchangeFalseDate() {
         $receiver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        $receiver->method('isValid')->willReturn(true);
+        $receiver->expects($this->once())->method('isValid')->willReturn(true);
         $receiver->method('getAge')->willReturn(20);
 
         $deliver = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        $deliver->method('isValid')->willReturn(true);
+        $deliver->expects($this->once())->method('isValid')->willReturn(true);
 
         $product = $this->getMockBuilder('Product')->disableOriginalConstructor()->getMock();
-        $product->method('isValid')->willReturn(true);
+        $product->expects($this->once())->method('isValid')->willReturn(true);
 
         $emailReceiver = $this->getMockBuilder('EmailSender')->disableOriginalConstructor()->getMock();
         $emailReceiver->method('sendEmail')->willReturn(true);
